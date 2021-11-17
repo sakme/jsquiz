@@ -79,7 +79,11 @@ var pageLoad = function() {
     contentSection.appendChild(contentDiv);
 };
 
+var startQuiz = function() {
+    event.preventDefault();
+    startTimer();
+};
 
-// pageLoad()
+pageLoad()
 
-// contentSection.addEventListener("click", pageLoad());
+contentSection.addEventListener("click", startQuiz);
