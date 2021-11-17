@@ -1,5 +1,10 @@
-var pageContentEl = document.querySelector("#page-content");
 var timeEl = document.querySelector("#timer");
+var contentSection = document.querySelector("#content");
+// var contentDiv = document.querySelector("#content_div");
+// var contentH2 = document.querySelector("#content_h2");
+// var contentP = document.querySelector("#content_p");
+// var contentPb = document.querySelector("#content_pb");
+// var contentB = document.querySelector("#content_b");
 var countDownTimer = 0
 var questionObj = [
     {
@@ -38,7 +43,7 @@ var questionObj = [
         button4: "console.log"
     }
 ];
-debugger;
+
 timeEl.textContent = "Time: " + countDownTimer;
 
 var startTimer = function() {
@@ -51,6 +56,30 @@ var startTimer = function() {
     },1000);
 };
 
-startTimer()
+var pageLoad = function() {
+    var contentDiv = document.createElement("Div")
+    contentDiv.setAttribute("id", "content_div")
 
-// pageContentEl.addEventListener("click", taskButtonHandler);
+    var contentH2 = document.createElement("H2");
+    contentH2.setAttribute("id", "content_h2")
+    contentH2.innerText = "Coding Quiz Challenge";
+    contentDiv.appendChild(contentH2);
+
+    var contentP = document.createElement("P");
+    contentP.setAttribute("id", "content_p");
+    contentP.innerText = "Try to answer the following code related questions within the time limit." + 
+        "Keep in mind that incorrect answers will penalize your score/time by ten seconds!";
+    contentDiv.appendChild(contentP);
+
+    var contentPb = document.createElement("P");
+    contentPb.setAttribute("id", "contentPb");
+    contentPb.innerHTML = "<button id='content_b'>Start Quiz</button>";
+    contentDiv.appendChild(contentPb);
+
+    contentSection.appendChild(contentDiv);
+};
+
+
+// pageLoad()
+
+// contentSection.addEventListener("click", pageLoad());
