@@ -70,18 +70,14 @@ var startTimer = function() {
     var downloadTimer = setInterval(function(){
         countDownTimer--;
         timeEl.textContent = "Time: " + countDownTimer;
-    if(countDownTimer <= 0)
+    if(countDownTimer < 0) {
+        score = countDownTimer;
         clearInterval(downloadTimer);
+        countDownTimer = 0;
+        finalScore();
+    }
     },1000);
 };
-
-// create timeout
-var timeoutID = function() {
-    setTimeout(() => {
-        score = countDownTimer;
-        finalScore();
-    }, countDownTimer*1000);
-}; 
 
 // initial page load
 var pageLoad = function() {
@@ -120,8 +116,6 @@ var startQuiz = function() {
 // present questions
 var questions = function() {
     var i = counter;
-
-    timeoutID();
 
         var questionID = questionObj[i].id;
         questionAnswer = questionObj[i].answer;
@@ -179,7 +173,7 @@ var checkAnswer = function(event) {
     
     //correct answer
     if (answer.matches("." + questionAnswer) && counter < lastQuestion && countDownTimer > 0) {
-        var contentdiv = document.createElement("Div");
+        var contentDiv = document.createElement("Div");
         contentDiv.setAttribute("id", "correct_div");
 
         var contentP = document.createElement("P");
@@ -208,7 +202,6 @@ var checkAnswer = function(event) {
             questions();
         } else {
             score = countDownTimer;
-            finalScore();
             countDownTimer = 0;
         }
     } // incorrect answer
@@ -244,20 +237,20 @@ var checkAnswer = function(event) {
                 questions();
             } else {
                 score = countDownTimer;
-                finalScore();
                 countDownTimer = 0;
             }
     } //timeout or finished 
     else {
         score = countDownTimer;
-        finalScore();
         countDownTimer = 0;
     }
 };
 
 var finalScore = function() {
     var contentDiv = document.getElementById("question_div");
-    contentDiv.parentNode.removeChild(contentDiv);
+    if (contentDiv) {
+        contentDiv.parentNode.removeChild(contentDiv);
+    }
 
     contentDiv = document.createElement("div");
     contentDiv.setAttribute("id", "end_div");
