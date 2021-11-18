@@ -9,6 +9,8 @@ var countDownTimer = 60;
 var questionAnswer = "";
 var initials = "";
 var score = "";
+var currentScore = "";
+var currentInitials = "";
 
 // create question and answer array
 var questionObj = [
@@ -62,7 +64,7 @@ var questionObj = [
 // set end of array
 var lastQuestion = questionObj.length - 1;
 
-//set time left html element
+//set initial time left html element
 timeEl.textContent = "Time: " + countDownTimer;
 
 // create timer
@@ -71,9 +73,10 @@ var startTimer = function() {
         countDownTimer--;
         timeEl.textContent = "Time: " + countDownTimer;
     if(countDownTimer < 0) {
-        score = countDownTimer;
+        // score = countDownTimer;
         clearInterval(downloadTimer);
         countDownTimer = 0;
+        timeEl.textContent = "Time: 0";
         finalScore();
     }
     },1000);
@@ -172,7 +175,7 @@ var checkAnswer = function(event) {
     var answer = event.target;
     
     //correct answer
-    if (answer.matches("." + questionAnswer) && counter < lastQuestion && countDownTimer > 0) {
+    if (answer.matches("." + questionAnswer) && counter <= lastQuestion && countDownTimer > 0) {
         var contentDiv = document.createElement("Div");
         contentDiv.setAttribute("id", "correct_div");
 
@@ -190,22 +193,23 @@ var checkAnswer = function(event) {
                     var contentDiv = document.getElementById("correct_div");
                     contentDiv.parentNode.removeChild(contentDiv);
                 } else {
-                    clearInterval(pause);
+                    clearInterval(pauseTimer);
                 }
             },1000);
         };
 
         pauseTimer();  
 
-        counter++;
-        if (countDownTimer > 0) {
+        if (countDownTimer > 0 && counter < lastQuestion) {
+            counter++;
             questions();
         } else {
             score = countDownTimer;
             countDownTimer = 0;
         }
+
     } // incorrect answer
-    else if (!answer.matches("." + questionAnswer) && counter < lastQuestion && countDownTimer > 0) {
+    else if (!answer.matches("." + questionAnswer) && counter <= lastQuestion && countDownTimer > 0) {
 
         var contentDiv = document.createElement("div");
         contentDiv.setAttribute("id", "wrong_div");
@@ -224,21 +228,22 @@ var checkAnswer = function(event) {
                     var contentDiv = document.getElementById("wrong_div");
                     contentDiv.parentNode.removeChild(contentDiv);
                 } else {
-                    clearInterval(pause);
+                    clearInterval(pauseTimer);
                 }
             },1000);
         };
 
         pauseTimer();  
 
-        counter++;
         countDownTimer = countDownTimer - 10;
-            if (countDownTimer > 0) {
-                questions();
-            } else {
-                score = countDownTimer;
-                countDownTimer = 0;
-            }
+        if (countDownTimer > 0 && counter < lastQuestion) {
+        counter++;
+            questions();
+        } else {
+            score = countDownTimer;
+            countDownTimer = 0;
+        }
+
     } //timeout or finished 
     else {
         score = countDownTimer;
@@ -246,6 +251,7 @@ var checkAnswer = function(event) {
     }
 };
 
+// calculate final score
 var finalScore = function() {
     var contentDiv = document.getElementById("question_div");
     if (contentDiv) {
@@ -276,11 +282,73 @@ var finalScore = function() {
 
     var contentB = document.createElement("button");
     contentB.setAttribute("id", "end_b");
+    contentB.setAttribute("type", "submit");
     contentB.innerText = "Submit";
     contentDiv.appendChild(contentB);
 
     endSection.appendChild(contentDiv);
+
+    var submitInitials = document.querySelector("#end_input");
+    var submitScore = document.querySelector("#end_b");
+    
+
+    submitInitials.addEventListener("keyup", function() {
+        if (event.keyCode === 13) {
+            event.preventDefault();
+            console.log(submitInitials.value);
+            if (submitInitials.value === null || submitInitials.value === "" || submitInitials.value === " ") {
+                window.alert("You must enter your initials.  Please try again!");
+            } else {
+                initials = submitInitials.value.trim()
+                leaderBoard();
+            }
+        }
+    })
+
+    submitScore.addEventListener("click", function() {
+        event.preventDefault();
+        console.log(submitInitials.value);
+        if (submitInitials.value === null || submitInitials.value === "" || submitInitials.value === " ") {
+            window.alert("You must enter your initials.  Please try again!");
+        } else {
+            initials = submitInitials.value.trim()
+            leaderBoard();
+        }
+    })
 };
+
+// retrieve high score and update
+var leaderBoard = function() {
+    var thisScore = {
+        name: initials,
+        result: score
+    };
+
+    var currentLeader = {
+        name: null,
+        result: null
+    };
+
+    var getLeader = localStorage.getItem("scores");
+
+    currentLeader = JSON.parse(getLeader);
+
+    console.log(thisScore);
+    console.log(currentLeader);
+
+    if (currentLeader === null && score > 0) {
+        localStorage.setItem("scores", JSON.stringify(thisScore));
+    } else if (currentLeader != null && score > currentLeader.result) {
+        localStorage.setItem("scores", JSON.stringify(thisScore));
+    } else if (currentLeader != null && score <= 0) {
+        localStorage.setItem("scores", JSON.stringify(currentLeader));
+    } else {
+        window.alert("No high score set!");
+    }
+
+    location.href = "highscore.html";
+};
+
 
 pageLoad()
 

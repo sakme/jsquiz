@@ -40,12 +40,16 @@ header p {
   margin: 20% 0 5px 0;
 }
 
-#high_score {
+.input {
   width: 50%;
-  height: 20px;
+  height: 25px;
   background-color: #f9d9ff;
   margin: 0 0 5px 0;
   border-radius: 5px;
+  font-weight: bold;
+  font-size: 16px;
+  border: 1px solid #81009b;
+  padding: 0 5px;
 }
 
 #content div {
