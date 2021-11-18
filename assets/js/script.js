@@ -4,8 +4,11 @@ var contentSection = document.querySelector("#content");
 var questionSection = document.querySelector("#question");
 var correctSection = document.querySelector("#correct");
 var wrongSection = document.querySelector("#wrong");
+var endSection = document.querySelector("#end");
 var countDownTimer = 60;
 var questionAnswer = "";
+var initials = "";
+var score = "";
 
 // create question and answer array
 var questionObj = [
@@ -74,12 +77,15 @@ var startTimer = function() {
 
 // create timeout
 var timeoutID = function() {
-    setTimeout(() => {console.log("Your score is 0!")}, countDownTimer*1000);
+    setTimeout(() => {
+        score = countDownTimer;
+        finalScore();
+    }, countDownTimer*1000);
 }; 
 
 // initial page load
 var pageLoad = function() {
-    var contentDiv = document.createElement("Div")
+    var contentDiv = document.createElement("div")
     contentDiv.setAttribute("id", "content_div")
 
     var contentH2 = document.createElement("H2");
@@ -95,7 +101,7 @@ var pageLoad = function() {
 
     var contentPb = document.createElement("P");
     contentPb.setAttribute("id", "contentPb");
-    contentPb.innerHTML = "<button id='content_b'>Start Quiz</button>";
+    contentPb.innerHTML = "<button id='content_b' type='submit'>Start Quiz</button>";
     contentDiv.appendChild(contentPb);
 
     contentSection.appendChild(contentDiv);
@@ -117,18 +123,15 @@ var questions = function() {
 
     timeoutID();
 
-    console.log("id: " + i);
-    console.log("length: " + questionObj.length)
         var questionID = questionObj[i].id;
         questionAnswer = questionObj[i].answer;
 
         if (questionID > 0) {
-            // console.log(questionID);
             var contentDiv = document.getElementById("question_div");
             contentDiv.parentNode.removeChild(contentDiv);
         }
 
-        contentDiv = document.createElement("Div");
+        contentDiv = document.createElement("div");
         contentDiv.setAttribute("id", "question_div");
 
         var contentH2 = document.createElement("H2");
@@ -138,27 +141,35 @@ var questions = function() {
 
         var contentPb = document.createElement("P");
         contentPb.setAttribute("id", "question_Pb");
-        contentPb.innerHTML = "<button id='question_b' name='button1' class='button1'>" + questionObj[i].button1 + "</button>";
+        contentPb.innerHTML = "<button id='question_b1' type='submit' name='button1' class='button1'>" + questionObj[i].button1 + "</button>";
         contentDiv.appendChild(contentPb);
 
         var contentPb = document.createElement("P");
         contentPb.setAttribute("id", "question_Pb");
-        contentPb.innerHTML = "<button id='question_b' name='button2' class='button2'>" + questionObj[i].button2 + "</button>";
+        contentPb.innerHTML = "<button id='question_b2' type='submit' name='button2' class='button2'>" + questionObj[i].button2 + "</button>";
         contentDiv.appendChild(contentPb);
 
         var contentPb = document.createElement("P");
         contentPb.setAttribute("id", "question_Pb");
-        contentPb.innerHTML = "<button id='question_b' name='button3' class='button3'>" + questionObj[i].button3 + "</button>";
+        contentPb.innerHTML = "<button id='question_b3' type='submit' name='button3' class='button3'>" + questionObj[i].button3 + "</button>";
         contentDiv.appendChild(contentPb);
 
         var contentPb = document.createElement("P");
         contentPb.setAttribute("id", "question_Pb");
-        contentPb.innerHTML = "<button id='question_b' name='button4' class='button4'>" + questionObj[i].button4 + "</button>";
+        contentPb.innerHTML = "<button id='question_b4' type='submit' name='button4' class='button4'>" + questionObj[i].button4 + "</button>";
         contentDiv.appendChild(contentPb);
 
         questionSection.appendChild(contentDiv);
+        
+        var ansBtn1 = document.querySelector("#question_b1")
+        var ansBtn2 = document.querySelector("#question_b2")
+        var ansBtn3 = document.querySelector("#question_b3")
+        var ansBtn4 = document.querySelector("#question_b4")
                 
-        questionSection.addEventListener("click", checkAnswer);
+        ansBtn1.addEventListener("click", checkAnswer);
+        ansBtn2.addEventListener("click", checkAnswer);
+        ansBtn3.addEventListener("click", checkAnswer);
+        ansBtn4.addEventListener("click", checkAnswer);
 };
 
 // check answers
@@ -166,8 +177,9 @@ var checkAnswer = function(event) {
     event.preventDefault();
     var answer = event.target;
     
+    //correct answer
     if (answer.matches("." + questionAnswer) && counter < lastQuestion && countDownTimer > 0) {
-        var contentDiv = document.createElement("Div");
+        var contentdiv = document.createElement("Div");
         contentDiv.setAttribute("id", "correct_div");
 
         var contentP = document.createElement("P");
@@ -186,17 +198,23 @@ var checkAnswer = function(event) {
                 } else {
                     clearInterval(pause);
                 }
-            },2000);
+            },1000);
         };
 
         pauseTimer();  
 
         counter++;
-        questions();
-    } else if (!answer.matches("." + questionAnswer) && counter < lastQuestion < lastQuestion && countDownTimer > 0) {
-        console.log("wrong answer");
+        if (countDownTimer > 0) {
+            questions();
+        } else {
+            score = countDownTimer;
+            finalScore();
+            countDownTimer = 0;
+        }
+    } // incorrect answer
+    else if (!answer.matches("." + questionAnswer) && counter < lastQuestion && countDownTimer > 0) {
 
-        var contentDiv = document.createElement("Div");
+        var contentDiv = document.createElement("div");
         contentDiv.setAttribute("id", "wrong_div");
 
         var contentP = document.createElement("P");
@@ -215,7 +233,7 @@ var checkAnswer = function(event) {
                 } else {
                     clearInterval(pause);
                 }
-            },2000);
+            },1000);
         };
 
         pauseTimer();  
@@ -225,13 +243,54 @@ var checkAnswer = function(event) {
             if (countDownTimer > 0) {
                 questions();
             } else {
-                console.log("Your score is 0!");
+                score = countDownTimer;
+                finalScore();
+                countDownTimer = 0;
             }
-    } else {
-        console.log("Your score is " + countDownTimer + "!");
+    } //timeout or finished 
+    else {
+        score = countDownTimer;
+        finalScore();
+        countDownTimer = 0;
     }
+};
+
+var finalScore = function() {
+    var contentDiv = document.getElementById("question_div");
+    contentDiv.parentNode.removeChild(contentDiv);
+
+    contentDiv = document.createElement("div");
+    contentDiv.setAttribute("id", "end_div");
+
+    var contentH2 = document.createElement("h2");
+    contentH2.setAttribute("id", "end_h2");
+    contentH2.innerText = "All done!";
+    contentDiv.appendChild(contentH2);
+
+    var contentP = document.createElement("P");
+    contentP.setAttribute("id", "end_P");
+    contentP.innerHTML = "Your final score is " + score + "!";
+    contentDiv.appendChild(contentP);
+
+    var contentLabel = document.createElement("label");
+    contentLabel.setAttribute("id", "end_P");
+    contentLabel.innerHTML = "Enter initials:";
+    contentDiv.appendChild(contentLabel);
+
+    var contentInput = document.createElement("input");
+    contentInput.setAttribute("id", "end_input");
+    contentDiv.appendChild(contentInput);
+
+    var contentB = document.createElement("button");
+    contentB.setAttribute("id", "end_b");
+    contentB.innerText = "Submit";
+    contentDiv.appendChild(contentB);
+
+    endSection.appendChild(contentDiv);
 };
 
 pageLoad()
 
-contentSection.addEventListener("click", startQuiz);
+var startBtn = document.querySelector("#content_b")
+
+startBtn.addEventListener("click", startQuiz);
