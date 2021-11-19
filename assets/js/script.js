@@ -9,8 +9,6 @@ var countDownTimer = 60;
 var questionAnswer = "";
 var initials = "";
 var score = "";
-var currentScore = "";
-var currentInitials = "";
 
 // create question and answer array
 var questionObj = [
