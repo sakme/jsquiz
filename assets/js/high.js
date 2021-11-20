@@ -20,6 +20,7 @@ var scoreBoard = function() {
 
 var clearStorage = function() {
     localStorage.clear("scores");
+    location.reload();
 };
 
 scoreBoard();
